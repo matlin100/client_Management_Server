@@ -6,6 +6,10 @@ const Customer = require('../models/Customer'); // Adjust the path as per your p
 
 
 const DbService = {
+    async getUserById(userId) {
+        return await User.findById(userId);
+    },
+
     async findUserByEmail(email) {
         return await User.findOne({ email });
     },
@@ -54,28 +58,49 @@ const DbService = {
     async deleteUser(userId) {
         return await User.findByIdAndDelete(userId);
     },
+   
     
-    async findUserByEmail(email) {
-        return await User.findOne({ email });
-    },
+    
+        async  handleCustomerSubmission({ name, email, chatMessage, userId }) {
+            let user = await User.findById(userId);
+            if (!user) {
+                throw new Error('User not found');
+            }
+        
+            let customer = await Customer.findOne({ email, userId: user._id });
+            if (!customer) {
+                customer = new Customer({ name, email, userId: user._id });
+                user.users.push(customer._id);
+            }
+        
+            // TODO: Replace the following 'undefined' with actual values or logic
+            const chatEntry = {
+                message: chatMessage,
+                urgency: 1, // Replace with actual urgency value
+                importance: 1, // Replace with actual importance value
+                customerSatisfaction: 1, // Replace with actual customer satisfaction value
+                customerStrength: 1, // Replace with actual customer strength value
+                satisfaction: 1, // Replace with actual satisfaction value
+                subject: 'undefined', // Replace with actual subject value
+                category: 'undefined', // Replace with actual category value
+                content: 'undefined', // Replace with actual content value
+                recommend: 0, // Replace with actual recommendations
+                date: new Date() // Date now
+            };
+           
+            customer.chat.push(chatEntry);
+        
+            await customer.save();
+            await user.save();
+        
+            return customer;
+        }
+        
+    
+  
 
-    async handleCustomerSubmission({ name, email, chat, userId }) {
-        let user = await User.findById(userId);
-        if (!user) {
-            throw new Error('User not found');
-        }
-    
-        let customer = await Customer.findOne({ email, userId: user._id });
-        if (customer ) {
-            customer.chat.push(chat);
-        } else {
-            customer = new Customer({ name, email, chat: [chat], userId: user._id });
-            user.users.push(customer._id);
-        }
-        await customer.save();
-        await user.save();
-        return customer;
-    },
+
+     
 };
 
 module.exports = DbService;

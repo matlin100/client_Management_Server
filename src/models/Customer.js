@@ -1,5 +1,20 @@
 const mongoose = require('mongoose');
 
+const ChatSchema = new mongoose.Schema({
+    message: String,
+    urgency: Number,
+    importance: Number,
+    customerSatisfaction: Number,
+    customerStrength: Number,
+    satisfaction: Number,
+    subject: String,
+    category: String,
+    content: String,
+    recommend: [String],
+    date: { type: Date, default: Date.now }
+});
+
+
 const CustomerSchema =  new mongoose.Schema({
     name: {
         type: String,
@@ -20,25 +35,7 @@ const CustomerSchema =  new mongoose.Schema({
         minlength: 6,
         maxlength: 1024
     },
-   chat: [{
-    type: String,
-    required: false,
-    // urgency: Number,
-    // importance: Number,
-    // customerSatisfaction: Number,
-    // customerStrength: Number,
-    // satisfaction: Number,
-    // subject: String,
-    // category: String,
-    // content: String,
-    // date: Date,
-    // tyme: String,  
-    // urgency: Number,
-    recommend: [{
-        type: String,
-        required: false
-    }],
-}],
+   chat: [ChatSchema],
     omryRecommend: [{
         type: String,
         required: false

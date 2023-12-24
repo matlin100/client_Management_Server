@@ -73,6 +73,20 @@ const userController = {
         }
     },
 
+    async getUserByToken(req, res) {
+        try {
+            const token = req.headers['auth-token'];
+            if (!token) return res.status(401).send('Access denied. No token provided.');
+
+            const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
+            const user = await DbService.getUserById(decoded._id);
+
+            if (!user) return res.status(404).send('User not found');
+            res.json(user);
+        } catch (err) {
+            res.status(400).send('Invalid token');
+        }
+    },
 };
 
 module.exports = userController;
