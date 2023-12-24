@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const connectDB = require('./src/config/db')
+const verifyToken = require('./src/middleware/auth');
 
 // Connect to Database
 connectDB();
@@ -14,9 +15,9 @@ app.use(bodyParser.json());
 const authRoute = require('./src/routes/auth');
 const customerServiceRoute = require('./src/routes/customerService');
 
-// Route Middlewares
-// app.use('/api/user', authRoute);
-// app.use('/api/customer-service', customerServiceRoute);
+//Route Middlewares
+app.use('/auth', authRoute);
+app.use('/customer' ,customerServiceRoute);
 
 // Start Server
-app.listen(3000, () => console.log('Server Up and running'));
+app.listen(3000, () => console.log('Server Up and running port 3000'));
