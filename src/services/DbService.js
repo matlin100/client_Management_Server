@@ -61,7 +61,7 @@ const DbService = {
    
     
     
-        async  handleCustomerSubmission({ name, email, chatMessage, userId }) {
+        async  handleCustomerSubmission({ name, email, chat, userId }) {
             let user = await User.findById(userId);
             if (!user) {
                 throw new Error('User not found');
@@ -74,19 +74,20 @@ const DbService = {
             }
         
             // TODO: Replace the following 'undefined' with actual values or logic
-            const businessDescription = user.description
+            
+            
             const chatEntry = {
-                message: chatMessage,
-                urgency: await Number(GPTGeneratorService.generateResponse(chatMessage , description, GPTGeneratorService.urgency)), // Replace with actual urgency value
-                importance: await Number(GPTGeneratorService.generateResponse(chatMessage , description, GPTGeneratorService.importance)),
-                customerSatisfaction: await Number(GPTGeneratorService.generateResponse(chatMessage , description, GPTGeneratorService.customerSatisfaction)),
-                customerStrength: await Number(GPTGeneratorService.generateResponse(chatMessage , description, GPTGeneratorService.customerStrength)),
-                satisfaction: await Number(GPTGeneratorService.generateResponse(chatMessage , description, GPTGeneratorService.satisfaction)),
-                friendly: await Number(GPTGeneratorService.generateResponse(chatMessage , description, GPTGeneratorService.friendly)),
-                subject: await GPTGeneratorService.generateResponse(chatMessage , description, GPTGeneratorService.subject),
-                category:await GPTGeneratorService.generateResponse(chatMessage , description, GPTGeneratorService.category),
-                content: await GPTGeneratorService.generateResponse(chatMessage , description, GPTGeneratorService.content),
-                Personal_response:await Number( GPTGeneratorService.generateResponse(chatMessage , description, GPTGeneratorService.Personal_response)),
+                message: chat,
+                urgency: await (GPTGeneratorService.generateChat(chat , GPTGeneratorService.urgency)), // Replace with actual urgency value
+                importance: await (GPTGeneratorService.generateChat(chat , GPTGeneratorService.importance)),
+                customerSatisfaction: await (GPTGeneratorService.generateChat(chat , GPTGeneratorService.customerSatisfaction)),
+                customerStrength: await (GPTGeneratorService.generateChat(chat , GPTGeneratorService.customerStrength)),
+                satisfaction: await (GPTGeneratorService.generateChat(chat , GPTGeneratorService.satisfaction)),
+                friendly: await (GPTGeneratorService.generateChat(chat , GPTGeneratorService.friendly)),
+                subject: await GPTGeneratorService.generateChat(chat , GPTGeneratorService.subject),
+                category:await GPTGeneratorService.generateChat(chat , GPTGeneratorService.category),
+                content: await GPTGeneratorService.generateChat(chat , GPTGeneratorService.content),
+                Personal_response:await ( GPTGeneratorService.generateChat(chat , GPTGeneratorService.Personal_response)),
                 date: new Date() // Date now
             };
            
@@ -94,8 +95,8 @@ const DbService = {
         
             await customer.save();
             await user.save();
-        
-            return customer;
+            console.log("description :" +  user.description )
+            return {'customer':customer , 'Answer':GPTGeneratorService.generateAnswer(chat , user.description)}
         }
         
     
