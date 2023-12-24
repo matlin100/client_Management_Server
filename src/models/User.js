@@ -3,25 +3,31 @@ const mongoose = require('mongoose');
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
-        required: true
+        required: true,
+        minlength: 3,
+        maxlength: 50
     },
-    password:{
+    password: {
         type: String,
-        required: true
+        required: true,
+        minlength: 6,
+        maxlength: 1024
     },
     email: {
         type: String,
-        required: true
+        required: true,
+        unique: true,
+        minlength: 5,
+        maxlength: 255
     },
-    url:{
-        type:String,
+    url: {
+        type: String
     },
-    description:{
-        type: String,
+    description: {
+        type: String
     },
     logo: {
-        type: String,
-        required: false
+        type: String
     },
     tags: [String],
     address: {
@@ -41,33 +47,33 @@ const userSchema = new mongoose.Schema({
     },
     communication: [{
         date: Date,
-        customerName: [String], // Array of customer names
-        email: [String], // Array of emails
+        customerName: [String],
+        email: [String],
         urgency: Number,
         importance: Number,
         customerSatisfaction: Number,
         customerStrength: Number,
-        hour: String // Time of communication
+        hour: String
     }],
     recommend: [{
-        type: String,
-        required: false
+        type: String
     }],
     omryRecommend: [{
-        type: String,
-        required: false
+        type: String
     }],
     createdAt: {
         type: Date,
         default: Date.now
-    },    
+    },
     users: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Customer'
     }]
 });
+
 userSchema.methods.generateURL = function() {
     const baseURL = process.env.USER_URL; // Ensure USER_URL is defined in your .env file
-    return `${baseURL}/${this._id}`.toString();
+    return `${baseURL}/${this._id}`;
 };
+
 module.exports = mongoose.model('User', userSchema);

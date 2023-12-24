@@ -2,7 +2,7 @@
 
 const jwt = require('jsonwebtoken');
 const DbService = require('../services/DbService');
-const Customer = require('../models/Customer');
+
 
 
 const userController = {
@@ -54,7 +54,25 @@ const userController = {
         } catch (err) {
             res.status(500).send(err);
         }
-    }
+    },
+    async getUserByEmail(req, res) {
+        try {
+            const email = req.body.email;
+            if (!email) {
+                return res.status(400).send('Email is required');
+            }
+
+            const user = await DbService.findUserByEmail(email);
+            if (!user) {
+                return res.status(404).send('User not found');
+            }
+
+            res.json(user);
+        } catch (err) {
+            res.status(500).send(err.message);
+        }
+    },
+
 };
 
 module.exports = userController;

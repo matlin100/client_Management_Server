@@ -2,6 +2,8 @@
 
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
+const Customer = require('../models/Customer'); // Adjust the path as per your project structure
+
 
 const DbService = {
     async findUserByEmail(email) {
@@ -51,7 +53,29 @@ const DbService = {
     
     async deleteUser(userId) {
         return await User.findByIdAndDelete(userId);
-    }
+    },
+    
+    async findUserByEmail(email) {
+        return await User.findOne({ email });
+    },
+
+    async handleCustomerSubmission({ name, email, chat, userId }) {
+        let user = await User.findById(userId);
+        if (!user) {
+            throw new Error('User not found');
+        }
+    
+        let customer = await Customer.findOne({ email, userId: user._id });
+        if (customer ) {
+            customer.chat.push(chat);
+        } else {
+            customer = new Customer({ name, email, chat: [chat], userId: user._id });
+            user.users.push(customer._id);
+        }
+        await customer.save();
+        await user.save();
+        return customer;
+    },
 };
 
 module.exports = DbService;

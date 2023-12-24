@@ -13,11 +13,11 @@ app.use(bodyParser.json());
 
 // Import Routes
 const authRoute = require('./src/routes/auth');
-const customerServiceRoute = require('./src/routes/customerService');
+const customerRoute = require('./src/routes/customerRoutes');
 
 //Route Middlewares
 app.use('/auth', authRoute);
-app.use('/customer' ,customerServiceRoute);
+app.use('/customer' ,customerRoute);
 
 // Start Server
 app.listen(3000, () => console.log('Server Up and running port 3000'));

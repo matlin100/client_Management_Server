@@ -16,28 +16,24 @@ const CustomerSchema =  new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true,
+        required: false,
         minlength: 6,
         maxlength: 1024
-    },
-    customerServiceLink: {
-        type: String,
-        required: false
     },
    chat: [{
     type: String,
     required: false,
-    urgency: Number,
-    importance: Number,
-    customerSatisfaction: Number,
-    customerStrength: Number,
-    satisfaction: Number,
-    subject: String,
-    category: String,
-    content: String,
-    date: Date,
-    tyme: String,  
-    urgency: Number,
+    // urgency: Number,
+    // importance: Number,
+    // customerSatisfaction: Number,
+    // customerStrength: Number,
+    // satisfaction: Number,
+    // subject: String,
+    // category: String,
+    // content: String,
+    // date: Date,
+    // tyme: String,  
+    // urgency: Number,
     recommend: [{
         type: String,
         required: false
@@ -52,7 +48,10 @@ const CustomerSchema =  new mongoose.Schema({
         default: Date.now
     },
     
-
+    userId:{
+        type: String,
+        required: true
+    }
     // For example, role, date of account creation, etc.
 });
 
