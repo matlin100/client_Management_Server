@@ -7,8 +7,9 @@ const GPTGeneratorService = {
   customerSatisfaction: `Answer only one number! Between one and ten how satisfied the customer is, the answer must include the number one without any additional text`,
   customerStrength:`Answer only one number! Between one and ten, how demanding the customer is, the answer must include the number one without any additional text`,
   satisfaction: `Answer only one number! Between one and ten how satisfied the customer is, the answer must include the number one without any additional text` ,
+  friendly:  `Answer only one number! No matter how friendly the customer is, the answer must include one number without any additional text`,
   subject: `Answer in only one word what is the subject of the request, the answer must include only one word without any additional text`,
-  category: `Answer in only one word what is the category of the request, the answer must include only one word without any additional text`,
+  category: `Answer in only one word what is the ca,tegory of the request, the answer must include only one word without any additional text`,
   content: `Summarize in no more than 10 words what the customer's request is, the answer will not include more than 10 words`,
   Personal_response: `Answer only one number! Does the customer's reference require a personal answer from me? Yes, answer 1. If you don't answer 0, the answer must include one number.
   1 if yes or 0 if no without any further tact`,
@@ -46,13 +47,3 @@ module.exports = GPTGeneratorService;
 
 
 
-const  urgency = `Answer only one number! Between one and ten, how urgent is the client's issue for treatment, the answer must include a number one without any additional text`
-const importance=`Answer only one number! Between one and ten, how important is the client's issue to the treatment, the answer must include one number without any additional text`
-const  customerSatisfaction = `Answer only one number! Between one and ten how satisfied the customer is, the answer must include the number one without any additional text`
-const  customerStrength =`Answer only one number! Between one and ten, how demanding the customer is, the answer must include the number one without any additional text`
-const satisfaction = `Answer only one number! Between one and ten how satisfied the customer is, the answer must include the number one without any additional text` 
-const subject = `Answer in only one word what is the subject of the request, the answer must include only one word without any additional text`
-const  category = `Answer in only one word what is the category of the request, the answer must include only one word without any additional text`
-const content = `Summarize in no more than 10 words what the customer's request is, the answer will not include more than 10 words`
-const Personal_response = `Answer only one number! Does the customer's reference require a personal answer from me? Yes, answer 1. If you don't answer 0, the answer must include one number.
-1 if yes or 0 if no without any further tact`

@@ -3,7 +3,7 @@
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 const Customer = require('../models/Customer'); // Adjust the path as per your project structure
-
+const  GPTGeneratorService = require('./GPTgeneratorService')
 
 const DbService = {
     async getUserById(userId) {
@@ -74,17 +74,19 @@ const DbService = {
             }
         
             // TODO: Replace the following 'undefined' with actual values or logic
+            const businessDescription = user.description
             const chatEntry = {
                 message: chatMessage,
-                urgency: 1, // Replace with actual urgency value
-                importance: 1, // Replace with actual importance value
-                customerSatisfaction: 1, // Replace with actual customer satisfaction value
-                customerStrength: 1, // Replace with actual customer strength value
-                satisfaction: 1, // Replace with actual satisfaction value
-                subject: 'undefined', // Replace with actual subject value
-                category: 'undefined', // Replace with actual category value
-                content: 'undefined', // Replace with actual content value
-                recommend: 0, // Replace with actual recommendations
+                urgency: GPTGeneratorService.generateResponse(chatMessage , description, GPTGeneratorService.urgency), // Replace with actual urgency value
+                importance: GPTGeneratorService.generateResponse(chatMessage , description, GPTGeneratorService.importance),
+                customerSatisfaction: GPTGeneratorService.generateResponse(chatMessage , description, GPTGeneratorService.customerSatisfaction),
+                customerStrength: GPTGeneratorService.generateResponse(chatMessage , description, GPTGeneratorService.customerStrength),
+                satisfaction:GPTGeneratorService.generateResponse(chatMessage , description, GPTGeneratorService.satisfaction),
+                friendly:GPTGeneratorService.generateResponse(chatMessage , description, GPTGeneratorService.friendly),
+                subject: GPTGeneratorService.generateResponse(chatMessage , description, GPTGeneratorService.subject),
+                category: GPTGeneratorService.generateResponse(chatMessage , description, GPTGeneratorService.category),
+                content: GPTGeneratorService.generateResponse(chatMessage , description, GPTGeneratorService.content),
+                Personal_response: GPTGeneratorService.generateResponse(chatMessage , description, GPTGeneratorService.Personal_response),
                 date: new Date() // Date now
             };
            

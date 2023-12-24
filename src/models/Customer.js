@@ -7,10 +7,11 @@ const ChatSchema = new mongoose.Schema({
     customerSatisfaction: Number,
     customerStrength: Number,
     satisfaction: Number,
+    friendly: Number,
     subject: String,
     category: String,
     content: String,
-    recommend: [String],
+    Personal_response: Number,
     date: { type: Date, default: Date.now }
 });
 
