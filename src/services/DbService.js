@@ -30,7 +30,23 @@ const DbService = {
     },
 
     async updateUser(userId, updateData) {
-        return await User.findByIdAndUpdate(userId, updateData, { new: true });
+        try {
+            const user = await User.findByIdAndUpdate(userId, updateData, { new: true });
+            if (!user) {
+                throw new Error('User not found');
+            }
+    
+            // Generate URL with the available _id
+            user.url = user.generateURL();
+    
+            // Since we're modifying the document after findByIdAndUpdate, we need to save it
+            await user.save();
+    
+            return user;
+        } catch (err) {
+            console.error(err);
+            throw err; // Propagate the error to be handled in the controller
+        }
     },
     
     async deleteUser(userId) {
