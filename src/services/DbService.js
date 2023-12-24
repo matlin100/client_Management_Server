@@ -77,16 +77,16 @@ const DbService = {
             const businessDescription = user.description
             const chatEntry = {
                 message: chatMessage,
-                urgency: GPTGeneratorService.generateResponse(chatMessage , description, GPTGeneratorService.urgency), // Replace with actual urgency value
-                importance: GPTGeneratorService.generateResponse(chatMessage , description, GPTGeneratorService.importance),
-                customerSatisfaction: GPTGeneratorService.generateResponse(chatMessage , description, GPTGeneratorService.customerSatisfaction),
-                customerStrength: GPTGeneratorService.generateResponse(chatMessage , description, GPTGeneratorService.customerStrength),
-                satisfaction:GPTGeneratorService.generateResponse(chatMessage , description, GPTGeneratorService.satisfaction),
-                friendly:GPTGeneratorService.generateResponse(chatMessage , description, GPTGeneratorService.friendly),
-                subject: GPTGeneratorService.generateResponse(chatMessage , description, GPTGeneratorService.subject),
-                category: GPTGeneratorService.generateResponse(chatMessage , description, GPTGeneratorService.category),
-                content: GPTGeneratorService.generateResponse(chatMessage , description, GPTGeneratorService.content),
-                Personal_response: GPTGeneratorService.generateResponse(chatMessage , description, GPTGeneratorService.Personal_response),
+                urgency: await Number(GPTGeneratorService.generateResponse(chatMessage , description, GPTGeneratorService.urgency)), // Replace with actual urgency value
+                importance: await Number(GPTGeneratorService.generateResponse(chatMessage , description, GPTGeneratorService.importance)),
+                customerSatisfaction: await Number(GPTGeneratorService.generateResponse(chatMessage , description, GPTGeneratorService.customerSatisfaction)),
+                customerStrength: await Number(GPTGeneratorService.generateResponse(chatMessage , description, GPTGeneratorService.customerStrength)),
+                satisfaction: await Number(GPTGeneratorService.generateResponse(chatMessage , description, GPTGeneratorService.satisfaction)),
+                friendly: await Number(GPTGeneratorService.generateResponse(chatMessage , description, GPTGeneratorService.friendly)),
+                subject: await GPTGeneratorService.generateResponse(chatMessage , description, GPTGeneratorService.subject),
+                category:await GPTGeneratorService.generateResponse(chatMessage , description, GPTGeneratorService.category),
+                content: await GPTGeneratorService.generateResponse(chatMessage , description, GPTGeneratorService.content),
+                Personal_response:await Number( GPTGeneratorService.generateResponse(chatMessage , description, GPTGeneratorService.Personal_response)),
                 date: new Date() // Date now
             };
            
