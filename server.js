@@ -14,7 +14,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 // Import Routes
-const authRoute = require('./src/routes/auth');
+const authRoute = require('./src/routes/user');
 const customerRoute = require('./src/routes/customerRoutes');
 
 //Route Middlewares

@@ -77,7 +77,7 @@ const GPTGeneratorService = {
     }
 },
 
-async generateRecommend(chatHistory, Description) {
+async generateRecommendForcustomer(chatHistory, Description) {
     // Generate a summary from the chat history
     const summary = chatHistory.map(element => {
         return `subject: ${element.subject},chat number ${element.chatId}  category: ${element.category}, content message to the business: ${element.content}, recommend for this content message to the business: ${element.recommend}`;
