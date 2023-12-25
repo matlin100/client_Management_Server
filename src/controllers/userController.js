@@ -1,7 +1,8 @@
 // controllers/userController.js
 const jwt = require('jsonwebtoken');
 const UserService = require('../services/userService');
-const customerService = require('../services/customerService')
+const customerService = require('../services/customerService');
+const GPTGeneratorService = require('../services/GPTgeneratorService');
 
 const userController = {
  
@@ -28,6 +29,11 @@ const userController = {
             const token = jwt.sign({_id: user._id}, process.env.TOKEN_SECRET);
           
             const customerDetails = await customerService.fetchCustomerDetails(user.users, user.description)
+            const improveRecommend = await GPTGeneratorService.generateRecommendForUser(user.users, user.description)
+            console.log('improveRecommend :'+ improveRecommend)
+            if (! user.recommend) { user.recommend = []}
+            user.recommend[0] = improveRecommend
+            user.save()
 
             res.header('auth-token', token).json({'user': user,"customerDetails":customerDetails , 'token': token});
         } catch (err) {
@@ -76,7 +82,10 @@ const userController = {
             }
             
             const customerDetails = await customerService.fetchCustomerDetails(user.users,  user.description)
-            console.log('customerDetails in controller ' + customerDetails)
+            const improveRecommend = await GPTGeneratorService.generateRecommendForUser(user.users, user.description)
+            if (! user.recommend) { user.recommend = []}
+            user.recommend[0] = improveRecommend
+            user.save()
             res.json({ user, customerDetails });
         } catch (err) {
             res.status(500).send(err.message);
@@ -90,9 +99,16 @@ const userController = {
            
             const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
             const user = await UserService.getUserById(decoded._id);
-            
-            const customerDetails =await  customerService.fetchCustomerDetails(user.users,  user.description)
             if (!user) return res.status(404).send('User not found');
+
+            const customerDetails =await  customerService.fetchCustomerDetails(user.users,  user.description)
+            const improveRecommend = await GPTGeneratorService.generateRecommendForUser(user.users, user.description)
+            console.log('if ( user.recommend) { user.recommend = []}' + !user.recommend)
+            console.log('improveRecommend : '+ improveRecommend)
+            if (! user.recommend) { user.recommend = []}
+            user.recommend.push(improveRecommend)
+            await user.save()
+          
             res.json({ user, customerDetails });
         } catch (err) {
             res.status(400).send('Invalid token');

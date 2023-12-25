@@ -23,6 +23,7 @@ const GPTGeneratorController = {
             throw error;
         }
     }
+
 };
 
 module.exports = GPTGeneratorController;

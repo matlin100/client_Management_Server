@@ -37,8 +37,6 @@ const GPTGeneratorService = {
               max_tokens: 50
           });
   
-          console.log('API Response:', response.choices[0].message.content);
-  
           // Check if the response contains the expected data
           if (response && response.choices && response.choices.length > 0 && response.choices[0].message) {
               return response.choices[0].message.content.trim();
@@ -63,7 +61,7 @@ const GPTGeneratorService = {
             max_tokens: 500
         });
 
-        console.log('API Response:', response.choices[0].message.content);
+    ;
 
         // Check if the response contains the expected data
         if (response && response.choices && response.choices.length > 0 && response.choices[0].message) {
@@ -95,7 +93,6 @@ async generateRecommendForcustomer(chatHistory, Description) {
             max_tokens: 500
         });
 
-        console.log('API Response:', response.choices[0].message.content);
 
         // Check if the response contains the expected data
         if (response && response.choices && response.choices.length > 0 && response.choices[0].message) {
@@ -107,8 +104,65 @@ async generateRecommendForcustomer(chatHistory, Description) {
         console.error('Error in generateRecommend:', error);
         throw error;
     }
-}
-  
+},
+
+    async  generatesomryRecommendForcustomer(Recommend){
+        const promptMessages = [
+            { role: 'user', content: `in 20 words, Summarize the recommendation below  = ${this.recommend} , In no more than twenty words!!!`}
+        ];
+    
+        try {
+            const response = await openai.chat.completions.create({
+                model: this.gptModel,
+                messages: promptMessages,
+                max_tokens: 80
+            });
+    
+           
+    
+            // Check if the response contains the expected data
+            if (response && response.choices && response.choices.length > 0 && response.choices[0].message) {
+                return response.choices[0].message.content.trim();
+            } else {
+                throw new Error('Unexpected response format from OpenAI API');
+            }
+        } catch (error) {
+            console.error('Error in generateRecommend:', error);
+            throw error;
+        }
+    
+    },
+
+    async generateRecommendForUser(customeres,Description) {
+        // Generate a summary from the chat history
+     
+        const summary = customeres.map((element, index) => {
+            return `customer: ${index}, Recommend to: ${element.somryRecommend}`;
+        }).join('. ');
+     
+        // Prepare the prompt message for the OpenAI API
+        const promptMessages = [
+            { role: 'user', content: `This is my business description: ${Description}. Here This is my customeres ecommend for my business: ${summary}. Based on the recommendations of all the customers, what do you recommend I improve in the business, in detail` }
+        ];
+    
+        try {
+            const response = await openai.chat.completions.create({
+                model: this.gptModel,
+                messages: promptMessages,
+                max_tokens: 500
+            });
+    
+            // Check if the response contains the expected data
+            if (response && response.choices && response.choices.length > 0 && response.choices[0].message) {
+                return response.choices[0].message.content.trim();
+            } else {
+                throw new Error('Unexpected response format from OpenAI API');
+            }
+        } catch (error) {
+            console.error('Error in generateRecommend:', error);
+            throw error;
+        }
+    },
 };
 
 module.exports = GPTGeneratorService;

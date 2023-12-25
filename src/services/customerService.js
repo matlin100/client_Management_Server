@@ -74,13 +74,17 @@ const customerService = {
             const customerDetails = await Promise.all(
                 customerIds.map(async (customerId) => {
                     const customer = await Customer.findById(customerId);
-                    console.log(customer)
                     if (customer) {
                         if (!customer.Recommend) {
                             customer.Recommend = [];
                         }
+                        if(!customer.somryRecommend){
+                            customer.somryRecommend = []
+                        }
                         const recommendation = await GPTGeneratorService.generateRecommendForcustomer(customer.chat, userDetail);
+                        const somryRecommendion = await GPTGeneratorService.generatesomryRecommendForcustomer(recommendation)
                         customer.Recommend[0]= recommendation; 
+                        customer.somryRecommend[0] = somryRecommendion
                         await customer.save();
                     }
                     return customer;
