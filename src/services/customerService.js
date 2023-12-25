@@ -1,7 +1,6 @@
 const User = require('../models/User');
 const Customer = require('../models/Customer');
 const GPTGeneratorService = require('./GPTgeneratorService');
-const customerController = require('../controllers/GPTgeneratorController')
 
 const customerService = {
 
@@ -70,17 +69,27 @@ const customerService = {
         return GPTGeneratorService.generateAnswer(chat, user.description);
     },
     
-    async fetchCustomerDetails(customerIds) {
+    async fetchCustomerDetails(customerIds, userDetail) {
         try {
             const customerDetails = await Promise.all(
                 customerIds.map(async (customerId) => {
-                    return await Customer.findById(customerId);
+                    const customer = await Customer.findById(customerId);
+                    console.log(customer)
+                    if (customer) {
+                        if (!customer.Recommend) {
+                            customer.Recommend = [];
+                        }
+                        const recommendation = await GPTGeneratorService.generateRecommendForcustomer(customer.chat, userDetail);
+                        customer.Recommend[0]= recommendation; 
+                        await customer.save();
+                    }
+                    return customer;
                 })
             );
             return customerDetails;
         } catch (error) {
             console.error("Error fetching customer details", error);
-            throw error; // You can handle this error as needed in the calling function
+            throw error;
         }
     },
     

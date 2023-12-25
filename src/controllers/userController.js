@@ -27,7 +27,7 @@ const userController = {
             if (!validPass) return res.status(400).send('Invalid password');
             const token = jwt.sign({_id: user._id}, process.env.TOKEN_SECRET);
           
-            const customerDetails = await customerService.fetchCustomerDetails(user.users)
+            const customerDetails = await customerService.fetchCustomerDetails(user.users, user.description)
 
             res.header('auth-token', token).json({'user': user,"customerDetails":customerDetails , 'token': token});
         } catch (err) {
@@ -75,7 +75,7 @@ const userController = {
                 return res.status(404).send('User not found');
             }
             
-            const customerDetails = await customerService.fetchCustomerDetails(user.users)
+            const customerDetails = await customerService.fetchCustomerDetails(user.users,  user.description)
             console.log('customerDetails in controller ' + customerDetails)
             res.json({ user, customerDetails });
         } catch (err) {
@@ -91,7 +91,7 @@ const userController = {
             const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
             const user = await UserService.getUserById(decoded._id);
             
-            const customerDetails =await  customerService.fetchCustomerDetails(user.users)
+            const customerDetails =await  customerService.fetchCustomerDetails(user.users,  user.description)
             if (!user) return res.status(404).send('User not found');
             res.json({ user, customerDetails });
         } catch (err) {
