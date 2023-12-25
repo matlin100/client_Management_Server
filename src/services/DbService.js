@@ -6,6 +6,7 @@ const Customer = require('../models/Customer'); // Adjust the path as per your p
 const  GPTGeneratorService = require('./GPTgeneratorService')
 
 const DbService = {
+
     async getUserById(userId) {
         return await User.findById(userId);
     },
@@ -47,7 +48,7 @@ const DbService = {
     
             // Since we're modifying the document after findByIdAndUpdate, we need to save it
             await user.save();
-    
+            
             return user;
         } catch (err) {
             console.error(err);
@@ -59,45 +60,59 @@ const DbService = {
         return await User.findByIdAndDelete(userId);
     },
    
-    
-    
-        async  handleCustomerSubmission({ name, email, chat, userId }) {
-            let user = await User.findById(userId);
-            if (!user) {
-                throw new Error('User not found');
-            }
-        
-            let customer = await Customer.findOne({ email, userId: user._id });
-            if (!customer) {
-                customer = new Customer({ name, email, userId: user._id });
-                user.users.push(customer._id);
-            }
-        
-            // TODO: Replace the following 'undefined' with actual values or logic
-            
-            
-            const chatEntry = {
-                message: chat,
-                urgency: await (GPTGeneratorService.generateChat(chat , GPTGeneratorService.urgency)), // Replace with actual urgency value
-                importance: await (GPTGeneratorService.generateChat(chat , GPTGeneratorService.importance)),
-                customerSatisfaction: await (GPTGeneratorService.generateChat(chat , GPTGeneratorService.customerSatisfaction)),
-                customerStrength: await (GPTGeneratorService.generateChat(chat , GPTGeneratorService.customerStrength)),
-                satisfaction: await (GPTGeneratorService.generateChat(chat , GPTGeneratorService.satisfaction)),
-                friendly: await (GPTGeneratorService.generateChat(chat , GPTGeneratorService.friendly)),
-                subject: await GPTGeneratorService.generateChat(chat , GPTGeneratorService.subject),
-                category:await GPTGeneratorService.generateChat(chat , GPTGeneratorService.category),
-                content: await GPTGeneratorService.generateChat(chat , GPTGeneratorService.content),
-                Personal_response:await ( GPTGeneratorService.generateChat(chat , GPTGeneratorService.Personal_response)),
-                date: new Date() // Date now
-            };
-           
-            customer.chat.push(chatEntry);
-        
-            await customer.save();
-            await user.save();
-            console.log("description :" +  user.description )
-            return {'customer':customer , 'Answer':GPTGeneratorService.generateAnswer(chat , user.description)}
+    async  handleCustomerSubmission({ name, email, chat, userId }) {
+        let user = await User.findById(userId);
+        if (!user) {
+            throw new Error('User not found');
         }
+    
+        let customer = await Customer.findOne({ email, userId: user._id });
+        if (!customer) {
+            customer = new Customer({ name, email, userId: user._id });
+            user.users.push(customer._id);
+        }
+    
+        // TODO: Replace the following 'undefined' with actual values or logic
+        
+        
+        const chatEntry = {
+            message: chat,
+            urgency: await (GPTGeneratorService.generateChat(chat , GPTGeneratorService.urgency)), // Replace with actual urgency value
+            importance: await (GPTGeneratorService.generateChat(chat , GPTGeneratorService.importance)),
+            customerSatisfaction: await (GPTGeneratorService.generateChat(chat , GPTGeneratorService.customerSatisfaction)),
+            customerStrength: await (GPTGeneratorService.generateChat(chat , GPTGeneratorService.customerStrength)),
+            satisfaction: await (GPTGeneratorService.generateChat(chat , GPTGeneratorService.satisfaction)),
+            friendly: await (GPTGeneratorService.generateChat(chat , GPTGeneratorService.friendly)),
+            subject: await GPTGeneratorService.generateChat(chat , GPTGeneratorService.subject),
+            category: await GPTGeneratorService.generateChat(chat , GPTGeneratorService.category),
+            content: await GPTGeneratorService.generateChat(chat , GPTGeneratorService.content),
+            Personal_response: await( GPTGeneratorService.generateChat(chat , GPTGeneratorService.Personal_response)),
+            recommend: await( GPTGeneratorService.generateChat(chat , GPTGeneratorService.recommend)),
+            date: new Date() // Date now
+        };
+        
+        customer.chat.push(chatEntry);
+    
+        await customer.save();
+        await user.save();
+        console.log("description :" +  user.description )
+        return GPTGeneratorService.generateAnswer(chat , user.description)
+    },
+
+    async fetchCustomerDetails(customerIds) {
+        try {
+            const customerDetails = await Promise.all(
+                customerIds.map(async (customerId) => {
+                    return await Customer.findById(customerId);
+                })
+            );
+            return customerDetails;
+        } catch (error) {
+            console.error("Error fetching customer details", error);
+            throw error; // You can handle this error as needed in the calling function
+        }
+    }
+    
         
     
 };
