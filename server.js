@@ -22,4 +22,4 @@ app.use('/auth', authRoute);
 app.use('/customer' ,customerRoute);
 
 // Start Server
-app.listen(3000, () => console.log('Server Up and running port 3000'));
+app.listen(process.env.PORT || 3000, () => console.log('Server Up and running port 3000'));

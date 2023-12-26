@@ -8,43 +8,47 @@ const userController = {
  
     async register(req, res) {
         try {
-            const emailExist = await UserService.findUserByEmail(req.body.email);
-            if (emailExist) return res.status(400).send('Email already exists');
-
-            const savedUser = await UserService.saveUser(req.body.name, req.body.email, req.body.password);
-            res.send({ user: savedUser._id });
+          const emailExist = await UserService.findUserByEmail(req.body.email);
+          if (emailExist) return res.status(400).send('Email already exists');
+      
+          const savedUser = await UserService.saveUser(req.body.name, req.body.email, req.body.password);
+          
+          // Generate a JWT token for the registered user
+          const token = jwt.sign({ _id: savedUser._id }, process.env.TOKEN_SECRET);
+          
+          // Return a success message along with the user and token in the response
+          res.header('Authorization', token).json({ message: 'Registration successful',token });
         } catch (err) {
-            res.status(400).send(err);
+          res.status(400).send(err);
         }
-    },
-
-    async login(req, res) {
+      },
+      
+      async login(req, res) {
         try {
-            const user = await UserService.findUserByEmail(req.body.email);
+          const user = await UserService.findUserByEmail(req.body.email);
          
-            if (!user) return res.status(400).send('Email not found');
-            const validPass = await UserService.comparePassword(req.body.password, user.password);
+          if (!user) return res.status(400).send('Email not found');
+          const validPass = await UserService.comparePassword(req.body.password, user.password);
+        
+          if (!validPass) return res.status(400).send('Invalid password');
+          const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET);
+        
+          const improveRecommend = await GPTGeneratorService.generateRecommendForUser(user.users, user.description)
           
-            if (!validPass) return res.status(400).send('Invalid password');
-            const token = jwt.sign({_id: user._id}, process.env.TOKEN_SECRET);
-          
-            const customerDetails = await customerService.fetchCustomerDetails(user.users, user.description)
-            const improveRecommend = await GPTGeneratorService.generateRecommendForUser(user.users, user.description)
-            console.log('improveRecommend :'+ improveRecommend)
-            if (! user.recommend) { user.recommend = []}
-            user.recommend[0] = improveRecommend
-            user.save()
-
-            res.header('auth-token', token).json({'user': user,"customerDetails":customerDetails , 'token': token});
+          if (!user.recommend) { user.recommend = [] }
+          user.recommend[0] = improveRecommend
+          user.save()
+      
+          // Return a success message along with the user, customerDetails, and token in the response
+          res.header('Authorization', token).json({ message: 'Login successful', token });
         } catch (err) {
-            res.status(500).send(err);
+          res.status(500).send(err);
         }
-   
-    },
-    
+      },
+      
     async updateUser(req, res) {
         try {
-            const userId = req.params.id;
+            const userId = req.user._id;
             const updateData = req.body;
              
             const updatedUser = await UserService.updateUser(userId, updateData);
@@ -94,21 +98,17 @@ const userController = {
 
     async getUserByToken(req, res) {
         try {
-            const token = req.headers['auth-token'];
-            if (!token) return res.status(401).send('Access denied. No token provided.');
-           
-            const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
-            const user = await UserService.getUserById(decoded._id);
+            const authorizationHeader = req.header('Authorization');
+            if (!authorizationHeader) return res.status(401).send('Access Denied');
+            const token = authorizationHeader.split(' ')[1];
+            const verified = jwt.verify(token, process.env.TOKEN_SECRET);
+            const user = await UserService.getUserById(verified._id);
             if (!user) return res.status(404).send('User not found');
-
             const customerDetails =await  customerService.fetchCustomerDetails(user.users,  user.description)
             const improveRecommend = await GPTGeneratorService.generateRecommendForUser(user.users, user.description)
-            console.log('if ( user.recommend) { user.recommend = []}' + !user.recommend)
-            console.log('improveRecommend : '+ improveRecommend)
             if (! user.recommend) { user.recommend = []}
             user.recommend.push(improveRecommend)
             await user.save()
-          
             res.json({ user, customerDetails });
         } catch (err) {
             res.status(400).send('Invalid token');

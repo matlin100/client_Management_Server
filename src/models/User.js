@@ -45,7 +45,7 @@ const userSchema = new mongoose.Schema({
         category: String,
         content: String
     },
-    communication: [{
+    chaticon: [{
         date: Date,
         customerName: [String],
         email: [String],
